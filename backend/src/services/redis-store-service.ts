@@ -16,10 +16,11 @@ class RedisStoreService {
         maxAge: 1000 * 60 * 60 * 24 * 365 * 10, // 10 years
         httpOnly: true,
         sameSite: "lax", // csrf
-        secure: __prod__ // cookie only works in https and production
+        secure: __prod__, // cookie only works in https and production
       },
       secret: `${process.env.SESSION_SECRET}`,
       resave: false,
+      saveUninitialized: false,
     });
   }
 }

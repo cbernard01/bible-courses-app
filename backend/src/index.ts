@@ -1,9 +1,10 @@
 import {pgDatabaseService} from "./services/pg-database-service";
-import express, {NextFunction, Request, Response} from "express";
+import express from "express";
 import {redisStoreService} from "./services/redis-store-service";
 
 
 const main = async () => {
+
   await pgDatabaseService.connect();
   await pgDatabaseService.runMigrations();
 
@@ -19,20 +20,12 @@ const main = async () => {
 
   app.use(redisStoreService.session());
 
-  app.use(function (req: Request, res: Response, next: NextFunction) {
-    if (!req.session) {
-      res.status(404).send({message: "SESSION NOT FOUND"});
-    }
-
-    next();
-  })
-
-  app.listen(process.env.PORT, ()=> {
+  app.listen(process.env.PORT, () => {
     console.log(`Listening on port: ${process.env.PORT}`);
   })
 }
 
-main();
+main().then();
 
 
 
