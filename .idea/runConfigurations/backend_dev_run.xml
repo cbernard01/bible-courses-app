@@ -1,0 +1,23 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="backend-dev:run" type="js.build_tools.npm">
+    <package-json value="$PROJECT_DIR$/backend/package.json" />
+    <command value="run" />
+    <scripts>
+      <script value="dev:run" />
+    </scripts>
+    <node-interpreter value="project" />
+    <envs>
+      <env name="POSTGRES_HOST" value="127.0.0.1" />
+      <env name="POSTGRES_PORT" value="5432" />
+      <env name="POSTGRES_USER" value="postgres" />
+      <env name="POSTGRES_PASSWORD" value="password" />
+      <env name="POSTGRES_DATABASE" value="bible_courses" />
+      <env name="NODE_ENV" value="development" />
+      <env name="PORT" value="5000" />
+      <env name="MODE" value="DEV" />
+      <env name="RUN_MIGRATIONS" value="true" />
+      <env name="SESSION_SECRET" value="secret" />
+    </envs>
+    <method v="2" />
+  </configuration>
+</component>
