@@ -17,6 +17,7 @@
       <env name="MODE" value="DEV" />
       <env name="RUN_MIGRATIONS" value="true" />
       <env name="SESSION_SECRET" value="secret" />
+      <env name="REDIS_MAXAGE" value="31536000000" />
     </envs>
     <method v="2" />
   </configuration>

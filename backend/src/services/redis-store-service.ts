@@ -11,9 +11,9 @@ class RedisStoreService {
   session() {
     return session({
       name: 'qid',
-      store: new RedisStore({client: redisClient, disableTouch: true}), // Does not increase TTL
+      store: new RedisStore({client: redisClient, disableTouch: !__prod__}), // Does not increase TTL in development
       cookie: {
-        maxAge: 1000 * 60 * 60 * 24 * 365 * 10, // 10 years
+        maxAge: Number(process.env.REDIS_MAXAGE), // 1 year in development
         httpOnly: true,
         sameSite: "lax", // csrf
         secure: __prod__, // cookie only works in https and production
@@ -24,6 +24,5 @@ class RedisStoreService {
     });
   }
 }
-
 
 export const redisStoreService = new RedisStoreService();

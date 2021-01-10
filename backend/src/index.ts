@@ -1,27 +1,27 @@
 import {pgDatabaseService} from "./services/pg-database-service";
-import express from "express";
+import express, {Request, Response} from "express";
+import colors from "colors/safe";
 import {redisStoreService} from "./services/redis-store-service";
-
+import {apolloService} from "./services/apollo-service";
 
 const main = async () => {
-
   await pgDatabaseService.connect();
   await pgDatabaseService.runMigrations();
-
-  // const {db} = pgDatabaseService;
-  //
-  // const course = db.em.create(CourseEntity, {title: "test"});
-  // await db.em.persistAndFlush(course);
-  //
-  // const courses = await db.em.find(CourseEntity, {});
-  // console.log(courses);
 
   const app = express();
 
   app.use(redisStoreService.session());
 
+  await apolloService.server();
+  apolloService.use(app);
+
+  app.get("/", (_req: Request, res: Response) => {
+    res.setHeader("Content.Type", "application/json");
+    res.status(200).send({hello: "world"});
+  })
+
   app.listen(process.env.PORT, () => {
-    console.log(`Listening on port: ${process.env.PORT}`);
+    console.log(`[${colors.cyan("INFO")}] express server listening on port: ${process.env.PORT}`);
   })
 }
 
