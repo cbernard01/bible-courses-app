@@ -62,6 +62,7 @@ export type Mutation = {
   deleteCourse: Scalars['Boolean'];
   register: UserResponse;
   login: UserResponse;
+  logout: Scalars['Boolean'];
 };
 
 
@@ -115,6 +116,14 @@ export type LoginMutation = (
   ) }
 );
 
+export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type LogoutMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'logout'>
+);
+
 export type RegisterMutationVariables = Exact<{
   username: Scalars['String'];
   password: Scalars['String'];
@@ -130,9 +139,20 @@ export type RegisterMutation = (
       & Pick<FieldError, 'field' | 'message'>
     )>>, user?: Maybe<(
       { __typename?: 'UserEntity' }
-      & Pick<UserEntity, 'id' | 'username'>
+      & Pick<UserEntity, 'id' | 'username' | 'updatedAt' | 'createdAt'>
     )> }
   ) }
+);
+
+export type CoursesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type CoursesQuery = (
+  { __typename?: 'Query' }
+  & { courses: Array<(
+    { __typename?: 'CourseEntity' }
+    & Pick<CourseEntity, 'title' | 'id' | 'createdAt' | 'updatedAt'>
+  )> }
 );
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
@@ -144,7 +164,7 @@ export type MeQuery = (
     { __typename?: 'UserResponse' }
     & { user?: Maybe<(
       { __typename?: 'UserEntity' }
-      & Pick<UserEntity, 'id' | 'username' | 'createdAt' | 'updatedAt'>
+      & Pick<UserEntity, 'id' | 'username' | 'updatedAt' | 'createdAt'>
     )> }
   )> }
 );
@@ -170,6 +190,15 @@ export const LoginDocument = gql`
 export function useLoginMutation() {
   return Urql.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument);
 };
+export const LogoutDocument = gql`
+    mutation Logout {
+  logout
+}
+    `;
+
+export function useLogoutMutation() {
+  return Urql.useMutation<LogoutMutation, LogoutMutationVariables>(LogoutDocument);
+};
 export const RegisterDocument = gql`
     mutation Register($username: String!, $password: String!) {
   register(options: {username: $username, password: $password}) {
@@ -180,6 +209,8 @@ export const RegisterDocument = gql`
     user {
       id
       username
+      updatedAt
+      createdAt
     }
   }
 }
@@ -188,14 +219,28 @@ export const RegisterDocument = gql`
 export function useRegisterMutation() {
   return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument);
 };
+export const CoursesDocument = gql`
+    query Courses {
+  courses {
+    title
+    id
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+export function useCoursesQuery(options: Omit<Urql.UseQueryArgs<CoursesQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<CoursesQuery>({ query: CoursesDocument, ...options });
+};
 export const MeDocument = gql`
     query Me {
   me {
     user {
       id
       username
-      createdAt
       updatedAt
+      createdAt
     }
   }
 }

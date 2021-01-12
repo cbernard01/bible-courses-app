@@ -7,18 +7,18 @@ import {UserValidators} from "../validations/user-validators";
 @Resolver()
 export class UserResolver {
 
-  @Query(()=> UserResponse, {nullable: true})
- async me(
+  @Query(() => UserResponse, {nullable: true})
+  async me(
     @Ctx() {req, em}: MyContext
   ): Promise<UserResponse> {
 
     const id = req.session.userId;
 
-    if(!id) return {errors: [{field: "userId", message: "you are not logged in."}]}
+    if (!id) return {errors: [{field: "userId", message: "you are not logged in."}]}
 
     const user = await em.findOne(UserEntity, {id});
 
-    if(!user) return {errors: [{field: "user", message: "no user was found"}]}
+    if (!user) return {errors: [{field: "user", message: "no user was found"}]}
 
     return {user: user};
   }
@@ -80,5 +80,20 @@ export class UserResolver {
     req.session.userId = user.id;
 
     return {user: user};
+  }
+
+  @Mutation(() => Boolean)
+  logout(@Ctx() {req, res}: MyContext) {
+    return new Promise((resolve) =>
+      req.session.destroy((err) => {
+        if (err) {
+          console.log(err);
+          resolve(false)
+          return
+        }
+        res.clearCookie("qid");
+        resolve(true);
+      })
+    );
   }
 }

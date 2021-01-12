@@ -1,0 +1,8 @@
+query Courses{
+  courses {
+    title
+    id
+    createdAt
+    updatedAt
+  }
+}

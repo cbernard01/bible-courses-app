@@ -1,14 +1,12 @@
 import React from "react"
 import {Avatar, Box, Flex, Link, MenuGroup, Menu, MenuButton, MenuItem, MenuList} from "@chakra-ui/react";
 import NextLink from "next/link";
-import {useMeQuery} from "../generated/graphql";
+import {useLogoutMutation, useMeQuery} from "../generated/graphql";
+import {isServer} from "../utils/isServer";
 
-interface NavBarProps {
-
-}
-
-const NavBar: React.FC<NavBarProps> = ({}) => {
-  const [{data, fetching}] = useMeQuery();
+const NavBar: React.FC<{}> = ({}) => {
+  const [{fetching: logoutFetching}, logout]= useLogoutMutation();
+  const [{data, fetching}] = useMeQuery({pause: isServer()});
   let body = null
 
   if (fetching) {
@@ -32,9 +30,9 @@ const NavBar: React.FC<NavBarProps> = ({}) => {
         <MenuList>
           <MenuGroup title={data.me.user.username}>
             <MenuItem>Profile</MenuItem>
-          <NextLink href={"/logout"}>
-            <MenuItem>Logout</MenuItem>
-          </NextLink>
+            <NextLink href={"/"}>
+            <MenuItem onClick={()=> logout()} isLoading={{logoutFetching}}>Logout</MenuItem>
+            </NextLink>
           </MenuGroup>
         </MenuList>
       </Menu>
@@ -42,7 +40,7 @@ const NavBar: React.FC<NavBarProps> = ({}) => {
   }
 
   return (
-    <Flex bg={"tomato"} p={4}>
+    <Flex bg={"blue.600"} p={4}>
       <Box ml={"auto"}>
         {body}
       </Box>
