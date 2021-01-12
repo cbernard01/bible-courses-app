@@ -23,7 +23,7 @@ class ApolloService {
   }
 
   use(app: Express) {
-    this._server.applyMiddleware({app});
+    this._server.applyMiddleware({app, cors: false});
   }
 }
 

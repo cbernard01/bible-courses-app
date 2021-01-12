@@ -12,7 +12,6 @@ export class UserResolver {
     @Ctx() {req, em}: MyContext
   ): Promise<UserResponse> {
 
-    //@ts-ignore
     const id = req.session.userId;
 
     if(!id) return {errors: [{field: "userId", message: "you are not logged in."}]}
@@ -27,14 +26,14 @@ export class UserResolver {
   @Mutation(() => UserResponse)
   async register(
     @Arg('options', () => UsernamePasswordInput) options: UsernamePasswordInput,
-    @Ctx() {em}: MyContext
+    @Ctx() {req, em}: MyContext
   ): Promise<UserResponse> {
     const username = options.username.toLocaleLowerCase();
     const password = options.password;
     let errors: FieldError[] = [];
 
-    errors = UserValidators.checkUsername(username);
-    errors = UserValidators.checkPassword(password);
+    UserValidators.checkUsername(username, errors);
+    UserValidators.checkPassword(password, errors);
     if (errors.length >= 1) return {errors: errors};
 
     const existingUser = await em.findOne(UserEntity, {username: username});
@@ -48,6 +47,8 @@ export class UserResolver {
 
     try {
       await em.persistAndFlush(user);
+      req.session.userId = user.id;
+
     } catch (err) {
       return {errors: [{field: "user", message: "could not save user"}]}
     }
@@ -58,14 +59,14 @@ export class UserResolver {
   @Mutation(() => UserResponse)
   async login(
     @Arg('options', () => UsernamePasswordInput) options: UsernamePasswordInput,
-    @Ctx() {em, req}: MyContext
+    @Ctx() {req, em}: MyContext
   ): Promise<UserResponse> {
     const username = options.username.toLocaleLowerCase();
     const password = options.password;
     let errors: FieldError[] = [];
 
-    errors = UserValidators.checkUsername(username);
-    errors = UserValidators.checkPassword(password);
+    UserValidators.checkUsername(username, errors);
+    UserValidators.checkPassword(password, errors);
     if (errors.length >= 1) return {errors: errors};
 
     const user = await em.findOne(UserEntity, {username: username})
@@ -76,7 +77,6 @@ export class UserResolver {
 
     if (!valid) return {errors: [{field: "passsword", message: "invalid credentials"}]};
 
-    //@ts-ignore
     req.session.userId = user.id;
 
     return {user: user};

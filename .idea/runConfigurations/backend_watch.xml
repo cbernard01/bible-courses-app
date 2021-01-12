@@ -18,6 +18,7 @@
       <env name="RUN_MIGRATIONS" value="true" />
       <env name="SESSION_SECRET" value="secret" />
       <env name="REDIS_MAXAGE" value="31536000000" />
+      <env name="GRAPHQL_URL" value="http://localhost:5000/graphql" />
     </envs>
     <method v="2">
       <option name="NpmBeforeRunTask" enabled="true">
